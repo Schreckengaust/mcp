@@ -1,4 +1,4 @@
-# AWS MCP Servers 2
+# AWS MCP Servers 2 two
 
 A suite of specialized MCP servers that help you get the most out of AWS, wherever you use MCP.
 
