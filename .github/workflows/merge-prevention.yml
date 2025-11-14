@@ -85,15 +85,19 @@ jobs:
     needs: get-pr-info
     if: always()
     steps:
+      - run: |
+          echo "::group::Debug Output Values"
+          echo "PR_LABELS: ${{ needs.get-pr-info.outputs.pr-labels }}"
+          echo "::endgroup::"
       - name: When PR has the "${{ env.DO_NOT_MERGE_LABEL }}" label
         id: pr-has-label
-        if: contains(fromJson(needs.get-pr-info.outputs.pr-labels), env.DO_NOT_MERGE_LABEL)
+        if: contains(needs.get-pr-info.outputs.pr-labels, env.DO_NOT_MERGE_LABEL)
         run: |
           echo "::error::❌ The label \"${{ env.DO_NOT_MERGE_LABEL }}\" is used to prevent merging."
           exit 1
       - name: When PR does not have the "${{ env.DO_NOT_MERGE_LABEL }}" label
         id: pr-missing-label
-        if: ! contains(fromJson(needs.get-pr-info.outputs.pr-labels), env.DO_NOT_MERGE_LABEL)
+        if: ! contains(needs.get-pr-info.outputs.pr-labels, env.DO_NOT_MERGE_LABEL)
         run: |
           echo "::notice::✅ The label \"${{ env.DO_NOT_MERGE_LABEL }}\" is absent"
           exit 0
