@@ -54,7 +54,7 @@ jobs:
     if: always()
     steps:
       - run: |
-          PR_NUMBER="${{ needs.get-pr-info.outputs.pr-number }}"
+          PR_NUMBER="${{ needs.get-pr-info.outputs.pr_number }}"
           
           # Default to 0 (allow all) if not set
           if [ -z "$HALT_MERGES" ]; then
@@ -87,17 +87,17 @@ jobs:
     steps:
       - run: |
           echo "::group::Debug Output Values"
-          echo "PR_LABELS: ${{ needs.get-pr-info.outputs.pr-labels }}"
+          echo "PR_LABELS: ${{ needs.get-pr-info.outputs.pr_labels }}"
           echo "::endgroup::"
       - name: When PR has the "${{ env.DO_NOT_MERGE_LABEL }}" label
         id: pr-has-label
-        if: contains(needs.get-pr-info.outputs.pr-labels, env.DO_NOT_MERGE_LABEL)
+        if: contains(needs.get-pr-info.outputs.pr_labels, env.DO_NOT_MERGE_LABEL)
         run: |
           echo "::error::❌ The label \"${{ env.DO_NOT_MERGE_LABEL }}\" is used to prevent merging."
           exit 1
       - name: When PR does not have the "${{ env.DO_NOT_MERGE_LABEL }}" label
         id: pr-missing-label
-        if: ! contains(needs.get-pr-info.outputs.pr-labels, env.DO_NOT_MERGE_LABEL)
+        if: ! contains(needs.get-pr-info.outputs.pr_labels, env.DO_NOT_MERGE_LABEL)
         run: |
           echo "::notice::✅ The label \"${{ env.DO_NOT_MERGE_LABEL }}\" is absent"
           exit 0
