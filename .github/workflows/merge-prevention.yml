@@ -22,6 +22,9 @@ env:
 
 jobs:
   get-pr-info:
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ubuntu-latest
     outputs:
       pr_number: ${{ steps.get-pr.outputs.pr-number }}
