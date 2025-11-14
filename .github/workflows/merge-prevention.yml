@@ -26,6 +26,8 @@ jobs:
     outputs:
       pr_number: ${{ steps.get-pr.outputs.pr-number }}
       pr_labels: ${{ steps.get-pr.outputs.pr-labels }}
+    env:
+      PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
     steps:
       - name: Get PR info
         id: get-pr
@@ -38,7 +40,7 @@ jobs:
             PR_LABELS=$(echo "$PR_DATA" | jq -c '[.labels[].name] // []')
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
-            PR_LABELS=$(echo "${{ toJson(github.event.pull_request.labels.*.name) }}" | jq -c '.')
+            PR_LABELS=$(echo "$PR_LABELS_JSON" | jq -c '.')
           fi
           echo "::group::Debug Output Values"
           echo "PR_NUMBER: $PR_NUMBER"
