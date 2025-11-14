@@ -39,7 +39,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "merge_group" ]; then
 
-            echo "::group::Token Permissions Check"
+            echo "::group::Getting Information"
+            echo "${{ github.ref }}"
+            echo "${{ github.ref }}" | grep -oP '(?<=/pr-)\d+' || echo ""
+
+            
             echo "Checking token permissions..."
             curl -H "Authorization: token ${{ github.token }}" \
               -H "Accept: application/vnd.github+json" \
