@@ -30,12 +30,31 @@ jobs:
       pr_number: ${{ steps.get-pr.outputs.pr-number }}
       pr_labels: ${{ steps.get-pr.outputs.pr-labels }}
     env:
+      GH_TOKEN: ${{ github.token }}
       PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
     steps:
       - name: Get PR info
         id: get-pr
         run: |
           if [ "${{ github.event_name }}" == "merge_group" ]; then
+
+            echo "::group::Token Permissions Check"
+            echo "Checking token permissions..."
+            curl -H "Authorization: token ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/user"
+
+            echo "Checking commit access..."
+            curl -H "Authorization: token ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.event.merge_group.head_sha }}"
+              
+            echo "Checking PRs for commit..."
+            curl -H "Authorization: token ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.event.merge_group.head_sha }}/pulls"
+            echo "::endgroup::"
+          
             PR_DATA=$(curl -s -H "Authorization: token ${{ github.token }}" \
               "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.event.merge_group.head_sha }}/pulls" \
               | jq '.[0]')
