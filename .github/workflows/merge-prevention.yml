@@ -27,7 +27,7 @@ jobs:
       pr_number: ${{ steps.get-pr.outputs.pr-number }}
       pr_labels: ${{ steps.get-pr.outputs.pr-labels }}
     steps:
-      - name: Get PR number
+      - name: Get PR info
         id: get-pr
         run: |
           if [ "${{ github.event_name }}" == "merge_group" ]; then
@@ -38,7 +38,7 @@ jobs:
             PR_LABELS=$(echo "$PR_DATA" | jq -c '[.labels[].name] // []')
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
-            PR_LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}' | jq -c '. // []')
+            PR_LABELS=${{ toJson(github.event.pull_request.labels.*.name) }}
           fi
           echo "pr-number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "pr-labels=$PR_LABELS" >> $GITHUB_OUTPUT
