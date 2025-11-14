@@ -38,8 +38,12 @@ jobs:
             PR_LABELS=$(echo "$PR_DATA" | jq -c '[.labels[].name] // []')
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
-            PR_LABELS="${{ toJson(github.event.pull_request.labels.*.name) }}"
+            PR_LABELS=$(echo "${{ toJson(github.event.pull_request.labels.*.name) }}" | jq -c '.')
           fi
+          echo "::group::Debug Output Values"
+          echo "PR_NUMBER: $PR_NUMBER"
+          echo "PR_LABELS: $PR_LABELS"
+          echo "::endgroup::"
           echo "pr-number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "pr-labels=$PR_LABELS" >> $GITHUB_OUTPUT
   check-merge-status:
